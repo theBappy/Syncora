@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Logo } from "@/components/hero/logo";
+import Logo from "@/public/1.svg";
 import { Menu, X } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import React from "react";
@@ -11,6 +11,7 @@ import {
   LogoutLink,
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
+import Image from "next/image";
 
 const menuItems = [
   { name: "Features", href: "#link" },
@@ -52,7 +53,8 @@ export const HeroHeader = () => {
                 aria-label="home"
                 className="flex items-center space-x-2"
               >
-                <Logo />
+                <Image src={Logo} height={32} width={32} alt="logo" />
+                <span className="text-xl font-semibold text-blue-700 dark:text-white">Syncora</span>
               </Link>
 
               <button
