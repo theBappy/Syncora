@@ -6,6 +6,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
 import { AuthProvider } from "@/components/kinde/AuthProvider";
 import { Providers } from "@/lib/providers";
+import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,6 +42,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Providers>{children}</Providers>
+            <Toaster closeButton position="top-center" />
           </ThemeProvider>
         </body>
       </html>
