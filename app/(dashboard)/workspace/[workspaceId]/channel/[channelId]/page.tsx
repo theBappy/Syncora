@@ -1,7 +1,12 @@
+"use client"
+
+import { useParams } from "next/navigation";
+import { MessageInputForm } from "./_components/_message/message-input-form";
 import { ChannelHeader } from "./_components/channel-header";
 import { ChannelMessageList } from "./_components/channel-message-list";
 
 const ChannelPageMain = () => {
+  const {channelId} = useParams<{channelId: string}>()
   return (
     <div className="flex h-screen w-full">
       {/* main channel area */}
@@ -13,8 +18,8 @@ const ChannelPageMain = () => {
           <ChannelMessageList />
         </div>
         {/* fixed message input */}
-        <div className="">
-
+        <div className="border-t bg-background p-4">
+          <MessageInputForm channelId={channelId} />
         </div>
       </div>
     </div>
