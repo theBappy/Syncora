@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -19,10 +19,12 @@ import {
 } from "@kinde-oss/kinde-auth-nextjs/components";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { CreditCard, LogOut, User } from "lucide-react";
-
+import Image from "next/image";
 
 export function UserNav() {
-  const {data: {user}} = useSuspenseQuery(orpc.workspace.list.queryOptions())
+  const {
+    data: { user },
+  } = useSuspenseQuery(orpc.workspace.list.queryOptions());
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -32,9 +34,10 @@ export function UserNav() {
           size="icon"
         >
           <Avatar>
-            <AvatarImage
+            <Image
               src={getAvatar(user.picture, user.email!)}
               alt="user-image"
+              fill
               className="object-cover"
             />
             <AvatarFallback>

@@ -12,10 +12,10 @@ import { WorkspaceMembersList } from "./_components/workspace-members-list";
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration";
 import { orpc } from "@/lib/orpc";
 
-const ChannelListLayout = async({ children }: { children: ReactNode }) => {
-  const queryClient = getQueryClient()
+const ChannelListLayout = async ({ children }: { children: ReactNode }) => {
+  const queryClient = getQueryClient();
 
-  await queryClient.prefetchQuery(orpc.channel.list.queryOptions())
+  await queryClient.prefetchQuery(orpc.channel.list.queryOptions());
 
   return (
     <>
@@ -38,7 +38,9 @@ const ChannelListLayout = async({ children }: { children: ReactNode }) => {
               <ChevronDown className="size-4 transition-transform duration-200" />
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <ChannelList />
+              <HydrateClient client={queryClient}>
+                <ChannelList />
+              </HydrateClient>
             </CollapsibleContent>
           </Collapsible>
         </div>
@@ -50,11 +52,14 @@ const ChannelListLayout = async({ children }: { children: ReactNode }) => {
               <ChevronUp className="size-4 transition-transform duration-200" />
             </CollapsibleTrigger>
             <CollapsibleContent>
-              <WorkspaceMembersList />
+              <HydrateClient client={queryClient}>
+                <WorkspaceMembersList />
+              </HydrateClient>
             </CollapsibleContent>
           </Collapsible>
         </div>
       </div>
+      {children}
     </>
   );
 };
