@@ -31,10 +31,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { isDefinedError } from "@orpc/client";
+import { useRouter, useParams } from "next/navigation";
 
 export function CreateNewChannel() {
   const [open, setOpen] = useState(false);
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
+  const router = useRouter();
+  const { workspaceId } = useParams<{ workspaceId: string }>();
 
   const form = useForm({
     resolver: zodResolver(ChannelNameSchema),
@@ -50,10 +53,12 @@ export function CreateNewChannel() {
 
         queryClient.invalidateQueries({
           queryKey: orpc.channel.list.queryKey(),
-        })
+        });
 
         form.reset();
         setOpen(false);
+
+        router.push(`/workspace/${workspaceId}/channel/${newChannel.id}`);
       },
       onError: (error) => {
         if (isDefinedError(error)) {
@@ -75,7 +80,7 @@ export function CreateNewChannel() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full cursor-pointer">
           <Plus className="size-4" />
           Add Channel
         </Button>
