@@ -80,7 +80,7 @@ export function CreateNewChannel() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="w-full">
+        <Button variant="outline" className="w-full cursor-pointer">
           <Plus className="size-4" />
           Add Channel
         </Button>
