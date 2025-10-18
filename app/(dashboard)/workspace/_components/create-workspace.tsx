@@ -27,10 +27,14 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { workspaceSchema, WorkspaceSchemaType } from "@/app/schemas/workspace-schema";
+import {
+  workspaceSchema,
+  WorkspaceSchemaType,
+} from "@/app/schemas/workspace-schema";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { toast } from "sonner";
+import { isDefinedError } from "@orpc/client";
 
 export function CreateWorkspace() {
   const [open, setOpen] = useState(false);
@@ -55,14 +59,22 @@ export function CreateWorkspace() {
         form.reset();
         setOpen(false);
       },
-      onError: () => {
-        toast.error("Failed to create workspace, try again!")
-      }
+      onError: (error) => {
+        if (isDefinedError(error)) {
+          if (error.code === "RATE_LIMITED") {
+            toast.error(error.message);
+            return;
+          }
+          toast.error(error.message);
+          return;
+        }
+        toast.error("Failed to create workspace, try again!");
+      },
     })
   );
 
   function onSubmit(values: WorkspaceSchemaType) {
-    createWorkspaceMutation.mutate(values)
+    createWorkspaceMutation.mutate(values);
   }
 
   return (
@@ -106,7 +118,9 @@ export function CreateWorkspace() {
               )}
             />
             <Button disabled={createWorkspaceMutation.isPending} type="submit">
-              {createWorkspaceMutation.isPending ? "Creating...": "Create Workspace"}
+              {createWorkspaceMutation.isPending
+                ? "Creating..."
+                : "Create Workspace"}
             </Button>
           </form>
         </Form>
