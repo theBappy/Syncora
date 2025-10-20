@@ -3,7 +3,7 @@
 import { useEditor, EditorContent } from "@tiptap/react";
 import { editorExtensions } from "./extensions";
 import { MenuBar } from "./menu-bar";
-import { ReactNode } from "react";
+import { ReactNode, useEffect } from "react";
 
 interface Props {
   field: any;
@@ -35,6 +35,25 @@ export function RichTextEditor({ field, sendButton, footerLeft }: Props) {
       },
     },
   });
+
+  useEffect(() => {
+    if (!editor) return;
+
+    let parsedContent = "";
+    if (field?.value) {
+      try {
+        parsedContent = JSON.parse(field.value);
+      } catch {
+        parsedContent = "";
+      }
+    }
+
+    const currentJSON = editor.getJSON();
+    if (JSON.stringify(currentJSON) !== JSON.stringify(parsedContent)) {
+      editor.commands.setContent(parsedContent || "");
+    }
+  }, [field?.value, editor]);
+
   return (
     <div className="relative w-full border border-input rounded-lg overflow-hidden dark:bg-input/30 flex flex-col">
       <MenuBar editor={editor} />

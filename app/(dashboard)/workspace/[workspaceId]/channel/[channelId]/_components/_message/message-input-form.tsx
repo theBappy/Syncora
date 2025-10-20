@@ -41,10 +41,11 @@ export function MessageInputForm({ channelId }: Props) {
         queryClient.invalidateQueries({
           queryKey: orpc.message.list.key(),
         })
-        return toast.success("Message created successfully!");
+        form.reset({ channelId, content: "" });
+        toast.success("Message sent!");
       },
       onError: () => {
-        return toast.error("Failed create message");
+        return toast.error("Failed to send message");
       },
     })
   );
