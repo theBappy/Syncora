@@ -8,6 +8,7 @@ import prisma from "@/lib/db";
 import { createMessageSchema } from "../schemas/message-schema";
 import { getAvatar } from "@/lib/get-avatar";
 import { Message } from "@/lib/generated/prisma";
+import { standardReadSecurityMiddleware } from "../middlewares/arcjet/standard-read";
 
 export const createMessage = base
   .use(requiredAuthMiddleware)
@@ -23,7 +24,6 @@ export const createMessage = base
   .input(createMessageSchema)
   .output(z.custom<Message>())
   .handler(async ({ input, context, errors }) => {
-    
     // verify channel belongs to the user organization
     const channel = await prisma.channel.findFirst({
       where: {
@@ -50,4 +50,44 @@ export const createMessage = base
     return {
       ...created,
     };
+  });
+
+  export const listMessages = base
+  .use(requiredAuthMiddleware)
+  .use(requiredWorkspaceMiddleware)
+  .use(standardSecurityMiddleware)
+  .use(standardReadSecurityMiddleware)
+  .route({
+    method: "GET",
+    path: "/messages",
+    summary: "List all messages",
+    tags: ["Messages"],
+  })
+  .input(z.object({
+    channelId: z.string(),
+  }))
+  .output(z.array(z.custom<Message>()))
+  .handler(async ({input, context, errors}) => {
+    const channel = await prisma.channel.findFirst({
+      where: {
+        id: input.channelId,
+        workspaceId: context.workspace.orgCode,
+      },
+    });
+
+    if(!channel){
+      throw errors.FORBIDDEN();
+    }
+
+    const data = await prisma.message.findMany({
+      where: {
+        channelId: input.channelId,
+      },
+      orderBy:{
+        createdAt: 'desc'
+      },
+    });
+
+    return data;
+
   });

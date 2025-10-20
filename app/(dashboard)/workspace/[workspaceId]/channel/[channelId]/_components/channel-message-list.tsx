@@ -1,28 +1,24 @@
-import { MessageItem } from "./_message/message-item";
+"use client";
 
-const messages = [
-  {
-    id: 1,
-    message: "First message",
-    date: new Date(),
-    avatar: "https://avatars.githubusercontent.com/u/182516578?v=4",
-    userName: "Jenny",
-  },
-  {
-    id: 2,
-    message: "Second message",
-    date: new Date(),
-    avatar: "https://avatars.githubusercontent.com/u/182516578?v=4",
-    userName: "John",
-  },
-];
+import { orpc } from "@/lib/orpc";
+import { MessageItem } from "./_message/message-item";
+import { useQuery } from "@tanstack/react-query";
+import { useParams } from "next/navigation";
 
 export function ChannelMessageList() {
+  const { channelId } = useParams<{ channelId: string }>();
+  const { data } = useQuery(
+    orpc.message.list.queryOptions({
+      input: {
+        channelId: channelId,
+      },
+    })
+  );
   return (
     <div className="relative h-full">
       <div className="h-full overflow-y-auto px-4">
-        {messages.map((message) => (
-          <MessageItem key={message.id} {...message} />
+        {data?.map((message) => (
+          <MessageItem key={message.id} message={message} />
         ))}
       </div>
     </div>
