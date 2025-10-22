@@ -118,7 +118,7 @@ export function ChannelMessageList() {
       <div
         onScroll={handleScroll}
         ref={scrollRef}
-        className="h-full overflow-y-auto px-4"
+        className="h-full overflow-y-auto px-4 flex flex-col space-y-1"
       >
         {items?.map((message) => (
           <MessageItem key={message.id} message={message} />
