@@ -26,7 +26,6 @@ export function MessageInputForm({ channelId }: Props) {
 
   const queryClient = useQueryClient()
 
-
   const form = useForm({
     resolver: zodResolver(createMessageSchema),
     defaultValues: {
