@@ -7,6 +7,7 @@ import { ChannelMessageList } from "./_components/channel-message-list";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const ChannelPageMain = () => {
   const { channelId } = useParams<{ channelId: string }>();
@@ -25,7 +26,18 @@ const ChannelPageMain = () => {
       {/* main channel area */}
       <div className="flex flex-1 flex-col min-w-0">
         {/* fixed header */}
-        <ChannelHeader channelName={data?.channelName} />
+        {isLoading ? (
+          <div className="flex items-center justify-between h-14 px-4 border-b">
+            <Skeleton className="h-8 w-40" />
+            <div className="flex items-center space-x-2">
+              <Skeleton className="h-8 w-28" />
+              <Skeleton className="h-8 w-20" />
+              <Skeleton className="size-8" />
+            </div>
+          </div>
+        ) : (
+          <ChannelHeader channelName={data?.channelName} />
+        )}
         {/* scrollable messages area */}
         <div className="flex-1 overflow-hidden mb-4">
           <ChannelMessageList />
