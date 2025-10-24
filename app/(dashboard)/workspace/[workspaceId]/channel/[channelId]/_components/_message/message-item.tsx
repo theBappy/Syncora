@@ -1,13 +1,18 @@
+import { useState } from "react";
 import { SafeContent } from "@/components/rich-text-editor/safe-content";
 import { Message } from "@/lib/generated/prisma";
 import { getAvatar } from "@/lib/get-avatar";
 import Image from "next/image";
+import { MessageHoverToolbar } from "../_toolbar";
+import { EditMessage } from "../_toolbar/edit-message";
 
 interface Props {
   message: Message;
+  currentUserId: string;
 }
 
-export function MessageItem({ message }: Props) {
+export function MessageItem({ message, currentUserId }: Props) {
+  const [isEditing, setIsEditing] = useState(false);
   return (
     <div className="flex space-x-3 relative p-3 rounded-lg group hover:bg-muted/50">
       <Image
@@ -33,13 +38,33 @@ export function MessageItem({ message }: Props) {
             }).format(message.createdAt)}
           </p>
         </div>
-        <SafeContent className="text-sm break-words prose dark:prose-invert max-w-none marker:text-primary" content={JSON.parse(message.content)} />
-        {message.imageUrl && (
-          <div className="mt-3">
-            <Image src={message.imageUrl} alt="Message Attachment" width={512} height={512} className="rounded-md max-h-[320px] w-auto object-contain" />
-          </div>
+        {isEditing ? (
+          <EditMessage onCancel={() => setIsEditing(false)} onSave={() => setIsEditing(false)} message={message} />
+        ) : (
+          <>
+            <SafeContent
+              className="text-sm break-words prose dark:prose-invert max-w-none marker:text-primary"
+              content={JSON.parse(message.content)}
+            />
+            {message.imageUrl && (
+              <div className="mt-3">
+                <Image
+                  src={message.imageUrl}
+                  alt="Message Attachment"
+                  width={512}
+                  height={512}
+                  className="rounded-md max-h-[320px] w-auto object-contain"
+                />
+              </div>
+            )}
+          </>
         )}
       </div>
+      <MessageHoverToolbar
+        messageId={message.id}
+        canEdit={message.authorId === currentUserId}
+        onEdit={() => setIsEditing(true)}
+      />
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useMemo, useRef, useState, useEffect } from "react";
 import { orpc } from "@/lib/orpc";
 import { MessageItem } from "./_message/message-item";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, Loader2 } from "lucide-react";
@@ -51,6 +51,7 @@ export function ChannelMessageList() {
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
+  const {data: {user}} = useSuspenseQuery(orpc.workspace.list.queryOptions())
 
   //scroll to bottom when messages first load
   useEffect(() => {
@@ -178,7 +179,7 @@ export function ChannelMessageList() {
           </div>
         ) : (
           items?.map((message) => (
-            <MessageItem key={message.id} message={message} />
+            <MessageItem currentUserId={user.id} key={message.id} message={message} />
           ))
         )}
         <div ref={bottomRef} />
