@@ -31,6 +31,7 @@ export function ReactionsBar({ messageId, reactions, context }: ReactionsBarProp
         const listKey = ["message.list", channelId]
         await queryClient.cancelQueries({queryKey: listKey})
         const previous = queryClient.getQueryData()
+        //from 8:50
       },
       onSuccess: () => {
         return toast.success("Emoji added");
