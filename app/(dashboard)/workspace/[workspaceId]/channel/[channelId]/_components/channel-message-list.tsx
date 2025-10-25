@@ -51,7 +51,9 @@ export function ChannelMessageList() {
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
-  const {data: {user}} = useSuspenseQuery(orpc.workspace.list.queryOptions())
+  const {
+    data: { user },
+  } = useSuspenseQuery(orpc.workspace.list.queryOptions());
 
   //scroll to bottom when messages first load
   useEffect(() => {
@@ -157,6 +159,7 @@ export function ChannelMessageList() {
     if (!el) return;
     bottomRef.current?.scrollIntoView({
       block: "end",
+      behavior: "smooth",
     });
     setIsAtBottom(true);
   };
@@ -179,7 +182,11 @@ export function ChannelMessageList() {
           </div>
         ) : (
           items?.map((message) => (
-            <MessageItem currentUserId={user.id} key={message.id} message={message} />
+            <MessageItem
+              currentUserId={user.id}
+              key={message.id}
+              message={message}
+            />
           ))
         )}
         <div ref={bottomRef} />
@@ -206,17 +213,6 @@ export function ChannelMessageList() {
           <ChevronDown className="size-4" />
         </Button>
       )}
-      {/* {newMessages && !isAtBottom ? (
-        <Button
-          type="button"
-          variant="outline"
-          className="absolute bottom-4 right-8 rounded-full cursor-pointer"
-          onClick={scrollToBottom}
-        >
-          <ChevronDown className="size-4" />
-          New Messages
-        </Button>
-      ) : null} */}
     </div>
   );
 }

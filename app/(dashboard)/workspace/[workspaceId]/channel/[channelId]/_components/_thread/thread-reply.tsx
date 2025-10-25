@@ -7,6 +7,20 @@ interface ThreadReplyProps {
 }
 
 export function ThreadReply({ message }: ThreadReplyProps) {
+  let parsedContent: any;
+
+  try {
+    parsedContent =
+      typeof message.content === "string"
+        ? JSON.parse(message.content)
+        : message.content;
+  } catch {
+    parsedContent = message.content || {
+      type: "text",
+      content: "Invalid message format",
+    };
+  }
+
   return (
     <div className="flex space-x-3 p-3 hover:bg-muted/30 rounded-lg">
       <Image
@@ -26,13 +40,25 @@ export function ThreadReply({ message }: ThreadReplyProps) {
               hour12: true,
               month: "short",
               day: "numeric",
-            }).format(message.createdAt)}
+            }).format(new Date(message.createdAt))}
           </span>
         </div>
+
         <SafeContent
-          content={JSON.parse(message.content)}
+          content={parsedContent}
           className="text-sm break-words prose dark:prose-invert max-w-none marker:text-primary"
         />
+        {message.imageUrl && (
+          <div className="mt-2">
+            <Image
+              src={message.imageUrl}
+              alt="image-attachment"
+              width={512}
+              height={512}
+              className="rounded-md max-h-[320px] w-auto object-contain"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
