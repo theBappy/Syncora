@@ -9,6 +9,7 @@ import { MessageSquare } from "lucide-react";
 import { useThread } from "@/providers/thread-provider";
 import { orpc } from "@/lib/orpc";
 import { useQueryClient } from "@tanstack/react-query";
+import { ReactionsBar } from "../_reactions/reactions-bar";
 
 interface Props {
   message: MessageListItem;
@@ -83,6 +84,9 @@ export function MessageItem({ message, currentUserId }: Props) {
                 />
               </div>
             )}
+            {/* emoji reactions */}
+            <ReactionsBar reactions={message.reactions} messageId={message.id} />
+
             {message.repliesCount > 0 && (
               <button
                 onClick={() => openThread(message.id)}
