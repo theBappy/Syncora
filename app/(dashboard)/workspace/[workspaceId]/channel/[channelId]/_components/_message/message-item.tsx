@@ -1,18 +1,40 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { SafeContent } from "@/components/rich-text-editor/safe-content";
-import { Message } from "@/lib/generated/prisma";
 import { getAvatar } from "@/lib/get-avatar";
 import Image from "next/image";
 import { MessageHoverToolbar } from "../_toolbar";
 import { EditMessage } from "../_toolbar/edit-message";
+import { MessageListItem } from "@/lib/types";
+import { MessageSquare } from "lucide-react";
+import { useThread } from "@/providers/thread-provider";
+import { orpc } from "@/lib/orpc";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface Props {
-  message: Message;
+  message: MessageListItem;
   currentUserId: string;
 }
 
 export function MessageItem({ message, currentUserId }: Props) {
   const [isEditing, setIsEditing] = useState(false);
+  const { openThread } = useThread();
+
+  const queryClient = useQueryClient();
+
+  const prefetchThread = useCallback(() => {
+    const options = orpc.message.thread.list.queryOptions({
+      input: {
+        messageId: message.id,
+      },
+    });
+    queryClient
+      .prefetchQuery({
+        ...options,
+        staleTime: 60_000,
+      })
+      .catch(() => {});
+  }, [message.id, queryClient]);
+
   return (
     <div className="flex space-x-3 relative p-3 rounded-lg group hover:bg-muted/50">
       <Image
@@ -39,7 +61,11 @@ export function MessageItem({ message, currentUserId }: Props) {
           </p>
         </div>
         {isEditing ? (
-          <EditMessage onCancel={() => setIsEditing(false)} onSave={() => setIsEditing(false)} message={message} />
+          <EditMessage
+            onCancel={() => setIsEditing(false)}
+            onSave={() => setIsEditing(false)}
+            message={message}
+          />
         ) : (
           <>
             <SafeContent
@@ -56,6 +82,24 @@ export function MessageItem({ message, currentUserId }: Props) {
                   className="rounded-md max-h-[320px] w-auto object-contain"
                 />
               </div>
+            )}
+            {message.repliesCount > 0 && (
+              <button
+                onClick={() => openThread(message.id)}
+                className="mt-1 inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-border cursor-pointer"
+                type="button"
+                onMouseEnter={prefetchThread}
+                onFocus={prefetchThread}
+              >
+                <MessageSquare className="size-3.5" />
+                <span>
+                  {message.repliesCount}{" "}
+                  {message.repliesCount === 1 ? "reply" : "replies"}{" "}
+                </span>
+                <span className="opacity-0 group-hover:opacity-100 transition-opacity">
+                  View Thread
+                </span>
+              </button>
             )}
           </>
         )}
