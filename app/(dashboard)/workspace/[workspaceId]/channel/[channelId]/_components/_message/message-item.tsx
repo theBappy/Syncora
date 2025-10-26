@@ -85,7 +85,11 @@ export function MessageItem({ message, currentUserId }: Props) {
               </div>
             )}
             {/* emoji reactions */}
-            <ReactionsBar reactions={message.reactions} messageId={message.id} />
+            <ReactionsBar 
+            reactions={message.reactions} 
+            messageId={message.id} 
+            context={{type:'list', channelId:message.channelId!}}
+            />
 
             {message.repliesCount > 0 && (
               <button
