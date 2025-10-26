@@ -10,6 +10,7 @@ import { orpc } from "@/lib/orpc";
 import { SafeContent } from "@/components/rich-text-editor/safe-content";
 import { KindeUser } from "@kinde-oss/kinde-auth-nextjs";
 import { ThreadSidebarSkeleton } from "./thread-sidebar-skeleton";
+import { SummarizeThread } from "./summarize-thread";
 
 interface ThreadSidebarProps {
   user: KindeUser<Record<string, unknown>>;
@@ -128,6 +129,7 @@ export function ThreadSidebar({ user }: ThreadSidebarProps) {
           <span className="">Thread</span>
         </div>
         <div className="flex items-center gap-2">
+          <SummarizeThread messageId={selectedThreadId!} />
           <Button onClick={closeThread} variant="outline" size="icon">
             <X className="size-4" />
           </Button>

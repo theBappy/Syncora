@@ -1,6 +1,13 @@
+import { generateThreadSummary } from "./ai";
 import { createChannel, getChannel, listChannels } from "./channel";
 import { inviteMember, listMembers } from "./member";
-import { createMessage, listMessages, listThreadReplies, toggleReaction, updateMessage } from "./message";
+import {
+  createMessage,
+  listMessages,
+  listThreadReplies,
+  toggleReaction,
+  updateMessage,
+} from "./message";
 import { createWorkspace, listWorkspaces } from "./workspace";
 
 export const router = {
@@ -26,6 +33,16 @@ export const router = {
     },
     thread: {
       list: listThreadReplies,
+    },
+  },
+  ai: {
+    // compose: {
+    //   generate:
+    // },
+    thread: {
+      summary: {
+        generate: generateThreadSummary,
+      },
     },
   },
 };
