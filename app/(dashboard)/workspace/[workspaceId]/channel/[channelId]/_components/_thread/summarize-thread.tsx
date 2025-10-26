@@ -10,7 +10,7 @@ import { eventIteratorToStream } from "@orpc/client";
 import { client } from "@/lib/orpc";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState } from "react";
-import { ThreadSummaryCard } from "./thread-summary-cart";
+import { ThreadSummaryCard } from "./thread-summary-card";
 
 interface SummarizeThreadProps {
   messageId: string;
