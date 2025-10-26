@@ -1,12 +1,14 @@
 import { SafeContent } from "@/components/rich-text-editor/safe-content";
-import { Message } from "@/lib/generated/prisma";
 import Image from "next/image";
+import { ReactionsBar } from "../_reactions/reactions-bar";
+import { MessageListItem } from "@/lib/types";
 
 interface ThreadReplyProps {
-  message: Message;
+  message: MessageListItem;
+  selectedThreadId: string;
 }
 
-export function ThreadReply({ message }: ThreadReplyProps) {
+export function ThreadReply({ message, selectedThreadId }: ThreadReplyProps) {
   let parsedContent: any;
 
   try {
@@ -59,6 +61,11 @@ export function ThreadReply({ message }: ThreadReplyProps) {
             />
           </div>
         )}
+        <ReactionsBar
+          context={{ type: "thread", threadId: selectedThreadId }}
+          reactions={message.reactions}
+          messageId={message.id}
+        />
       </div>
     </div>
   );
