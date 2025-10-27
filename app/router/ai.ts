@@ -7,6 +7,7 @@ import { tiptapJsonToMarkdown } from "@/lib/json-to-markdown";
 import { streamText } from "ai";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamToEventIterator } from "@orpc/server";
+import { AISecurityMiddleware } from "../middlewares/arcjet/ai";
 
 const openrouter = createOpenRouter({
   apiKey: process.env.LLM_KEY,
@@ -19,11 +20,12 @@ const model = openrouter.chat(MODEL_ID);
 export const generateThreadSummary = base
   .use(requiredAuthMiddleware)
   .use(requiredWorkspaceMiddleware)
+  .use(AISecurityMiddleware)
   .route({
     method: "GET",
     path: "/ai/thread/summary",
     summary: "Generate thread summary",
-    tags: ["Ai"],
+    tags: ["AI"],
   })
   .input(
     z.object({
@@ -143,5 +145,50 @@ export const generateThreadSummary = base
       temperature: 0.2,
     });
 
+    return streamToEventIterator(result.toUIMessageStream());
+  });
+
+export const generateCompose = base
+  .use(requiredAuthMiddleware)
+  .use(requiredWorkspaceMiddleware)
+  .use(AISecurityMiddleware)
+  .route({
+    method: "POST",
+    path: "/ai/compose/generate",
+    summary: "Compose message",
+    tags: ["AI"],
+  })
+  .input(
+    z.object({
+      content: z.string(),
+    })
+  )
+  .handler(async ({ input }) => {
+    const markdown = await tiptapJsonToMarkdown(input.content);
+
+    const system = [
+      "You are a professional rewriting assistant, not a chatbot.",
+      "Your task is to rewrite the provided message in a clearer, grammatically correct, and more natural way while preserving its original meaning, facts, and terminology.",
+      "Keep the rewritten text concise and fluent, suitable for message or email-style communication.",
+      "Do not use bullet points, numbered lists, or excessive formatting unless present in the original content.",
+      "Maintain existing links exactly as they are.",
+      "Do not alter code blocks — only format them properly if needed.",
+      "Output strictly in clean Markdown paragraphs without HTML or images.",
+      "Do not address the user, ask questions, include commentary, or greetings.",
+      "Focus on readability, tone improvement, and correct grammar while keeping it simple and professional.",
+    ].join("\\n");
+
+    const result = streamText({
+      model,
+      system,
+      messages: [
+        {
+          role: "user",
+          content: "Please re-write and improve the following content:",
+        },
+        { role: "user", content: markdown },
+      ],
+      temperature: 0,
+    });
     return streamToEventIterator(result.toUIMessageStream());
   });
