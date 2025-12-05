@@ -54,7 +54,9 @@ export const HeroHeader = () => {
                 className="flex items-center space-x-2"
               >
                 <Image src={Logo} height={32} width={32} alt="logo" />
-                <span className="text-xl font-semibold text-blue-700 dark:text-white">Syncora</span>
+                <span className="text-xl font-semibold text-blue-700 dark:text-white">
+                  Syncora
+                </span>
               </Link>
 
               <button
@@ -134,6 +136,11 @@ export const HeroHeader = () => {
                           size: "sm",
                           className: cn(isScrolled && "lg:hidden"),
                         })}
+                        authUrlParams={{
+                          is_create_org: "true",
+                          org_name: "My Workspace",
+                          pricing_table_key: "organization_plans",
+                        }}
                       >
                         Sign Up
                       </RegisterLink>
@@ -144,6 +151,11 @@ export const HeroHeader = () => {
                           className={buttonVariants({
                             size: "sm",
                           })}
+                          authUrlParams={{
+                            is_create_org: "true",
+                            org_name: "My Workspace",
+                            pricing_table_key: "organization_plans",
+                          }}
                         >
                           Get Started
                         </RegisterLink>
