@@ -1,6 +1,10 @@
-import type { NextConfig } from "next";
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // IMPORTANT: Disable Turbopack (fixes the build crash)
+  experimental: {
+    turbo: false,
+  },
 
-const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {

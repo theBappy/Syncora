@@ -53,6 +53,7 @@
     "@tiptap/extensions": "^3.7.2",
     "@tiptap/react": "^3.7.2",
     "@tiptap/starter-kit": "^3.7.2",
+    "@tiptap/static-renderer": "^3.8.0",
     "@uploadthing/react": "^7.3.3",
     "ai": "^5.0.79",
     "class-variance-authority": "^0.7.1",
